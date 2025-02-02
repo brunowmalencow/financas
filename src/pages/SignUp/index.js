@@ -1,5 +1,5 @@
-import React, {useContext} from "react";
-import { Platform } from "react-native";
+import React, {useContext, useState} from "react";
+import { Platform, ActivityIndicator} from "react-native";
 
 import { AreaInput, Background, Container, Input, SubmitButton, SubmitText } from '../SignIn/styles';
 
@@ -8,10 +8,16 @@ import { AuthContext } from "../../contexts/auth";
 
 export default function SingUp(){
 
-    const { user } = useContext(AuthContext)
+    const { singUp, loadingAuth } = useContext(AuthContext)
+
+    const [nome, setNome] = useState('');
+    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
 
     function handleSingUp(){
-        alert(user)
+        if(nome === '' || password === '' || email == '') return;
+        
+        singUp(email, password, nome);
     }
 
     return(
@@ -19,19 +25,38 @@ export default function SingUp(){
             <Container behavior={Platform.OS == 'ios' ? 'padding' : ''} enable>
                 
                 <AreaInput >
-                <Input placeholder={'Nome'}/>
+                    <Input 
+                        placeholder={'Nome'}
+                        value={nome}
+                        onChangeText={ (text) => {setNome(text)}}
+                    />
                 </AreaInput>
                 
                 <AreaInput >
-                <Input placeholder={'Email'}/>
+                    <Input 
+                        placeholder={'Email'}
+                        value={email}
+                        onChangeText={ (text) => (setEmail(text)) }
+                    />
                 </AreaInput>
                 
                 <AreaInput >
-                <Input placeholder={'Senha'}/>
+                    <Input 
+                        placeholder={'Senha'}
+                        value={password}
+                        onChangeText={ (text) => {setPassword(text)} }
+                        secureTextEntry={true}
+                    />
                 </AreaInput>
 
                 <SubmitButton onPress={handleSingUp}>
-                    <SubmitText>Cadastrar</SubmitText>
+                    {
+                        loadingAuth ? (
+                            <ActivityIndicator size={20} color='#FFF'/>
+                        ) : (
+                            <SubmitText>Cadastrar</SubmitText>
+                        )
+                    }
                 </SubmitButton>
 
             </Container>
